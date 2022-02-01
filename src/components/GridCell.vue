@@ -26,13 +26,13 @@ export default defineComponent({
   },
   computed: {
     config (): any {
-      return { x: this.x, y: this.y, ...configHexagon }
+      return { ...configHexagon, x: this.x, y: this.y, strokeWidth: 0.6 }
     },
     horizontalLineConfig (): any {
       return {
         points: [
-          this.x - this.config.radius / 2 - 12,
-          this.y + this.config.radius / 4 - 5,
+          this.x - this.config.radius,
+          this.y,
           this.x + this.config.radius,
           this.y + this.config.radius / 4 - 5
         ],
@@ -44,7 +44,7 @@ export default defineComponent({
       return {
         points: [
           this.x,
-          this.y - 19,
+          this.y - getHexagonApothem(this.config.radius),
           this.x,
           this.y + getHexagonApothem(this.config.radius)
         ],
@@ -56,7 +56,7 @@ export default defineComponent({
       return {
         points: [
           this.x - this.config.radius + getHexagonXOffset(this.config.radius),
-          this.y - 19,
+          this.y - getHexagonApothem(this.config.radius),
           this.x + this.config.radius - getHexagonXOffset(this.config.radius),
           this.y + getHexagonApothem(this.config.radius)
         ],
@@ -68,7 +68,7 @@ export default defineComponent({
       return {
         points: [
           this.x + this.config.radius - getHexagonXOffset(this.config.radius),
-          this.y - 19,
+          this.y - getHexagonApothem(this.config.radius),
           this.x - this.config.radius + getHexagonXOffset(this.config.radius),
           this.y + getHexagonApothem(this.config.radius)
         ],
