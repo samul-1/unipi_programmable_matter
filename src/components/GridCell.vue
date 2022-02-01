@@ -1,9 +1,11 @@
 <template>
   <v-regular-polygon :config="config"></v-regular-polygon>
   <v-line :config="horizontalLineConfig"></v-line>
-  <v-line :config="verticalLineConfig"></v-line>
+  <!-- <v-line :config="verticalLineConfig"></v-line> -->
   <v-line :config="diag1LineConfig"></v-line>
   <v-line :config="diag2LineConfig"></v-line>
+  <v-line :config="overflowXLineConfig"></v-line>
+  <!-- <v-line :config="overflowYLineConfig"></v-line> -->
 </template>
 
 <script lang="ts">
@@ -71,6 +73,32 @@ export default defineComponent({
           this.y - getHexagonApothem(this.config.radius),
           this.x - this.config.radius + getHexagonXOffset(this.config.radius),
           this.y + getHexagonApothem(this.config.radius)
+        ],
+        stroke: 'black',
+        strokeWidth: 0.3
+      }
+    },
+    overflowXLineConfig (): any {
+      return {
+        points: [
+          this.x + this.config.radius + getHexagonXOffset(this.config.radius),
+          this.y + getHexagonApothem(this.config.radius),
+          this.x,
+          this.y + getHexagonApothem(this.config.radius)
+        ],
+        stroke: 'black',
+        strokeWidth: 0.3
+      }
+    },
+    overflowYLineConfig (): any {
+      return {
+        points: [
+          this.x + this.config.radius,
+          this.y,
+          this.x + this.config.radius,
+          this.y +
+            getHexagonApothem(this.config.radius) +
+            2 * getHexagonXOffset(this.config.radius)
         ],
         stroke: 'black',
         strokeWidth: 0.3
