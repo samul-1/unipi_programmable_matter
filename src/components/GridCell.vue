@@ -4,40 +4,23 @@
   <v-line :config="diag1LineConfig"></v-line>
   <v-line :config="diag2LineConfig"></v-line>
   <v-line :config="overflowXLineConfig"></v-line>
-
-  <!-- <v-circle
+  <v-text
     v-for="point in actionablePoints"
-    :key="'act-pt-' + point.x + '-' + point.y"
+    :key="index + '-p-' + point.gridCol + '-' + point.gridRow"
     :config="{
-      x: point.x,
-      y: point.y,
-      radius: 16,
-      fill: getFillColor(point)
-    }"
-  ></v-circle> -->
-  <!-- <v-text
-    :config="{
-      text: '(' + row + ', ' + col + ')',
+      text: '(' + point.gridRow + ', ' + point.gridCol + ')',
       fontSize: 15,
-      x: config.x,
-      y: config.y
+      x: point.x,
+      y: point.y
     }"
-  /> -->
-
-  <!-- <v-line :config="verticalLineConfig"></v-line> -->
-  <!-- <v-line :config="overflowYLineConfig"></v-line> -->
+  />
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {
-  configHexagon,
-  getHexagonApothem,
-  getHexagonSide,
-  getHexagonXOffset
-} from '@/shapes'
+import { configHexagon, getHexagonApothem, getHexagonXOffset } from '@/shapes'
 import { defineComponent } from '@vue/runtime-core'
 import { mapState } from 'vuex'
 export default defineComponent({
@@ -68,27 +51,10 @@ export default defineComponent({
       required: true
     }
   },
-  data () {
-    return {
-      //fillColor: 'yellow'
-    }
-  },
   mounted () {
     this.$store.commit('pushGridPoints', this.actionablePoints)
   },
-  methods: {
-    getRandomColor () {
-      return ['yellow', 'red', 'blue', 'green', 'purple', 'pink', 'orange'][
-        0 ?? Math.floor(Math.random() * 7)
-      ]
-    },
-    getFillColor (p: any) {
-      return p.gridCol == this.selectedPoint.x &&
-        p.gridRow == this.selectedPoint.y
-        ? 'red'
-        : 'yellow'
-    }
-  },
+  methods: {},
   computed: {
     config () {
       return { ...configHexagon, x: this.x, y: this.y, strokeWidth: 0.6 }
@@ -143,35 +109,32 @@ export default defineComponent({
         strokeWidth: 0.3
       }
     },
-    overflowYLineConfig () {
-      return {
-        points: [
-          this.x + this.radius,
-          this.y,
-          this.x + this.radius,
-          this.y + this.apothem + 2 * this.xOffset
-        ],
-        stroke: 'black',
-        strokeWidth: 0.3
-      }
-    },
     actionablePoints () {
       // the vertices and center point
       return [
-        {
-          // top left
-          x: this.x - this.xOffset,
-          y: this.y - this.apothem,
-          gridCol: this.precedingPointsX,
-          gridRow: this.precedingPointsY
-        },
-        {
-          // top right
-          x: this.x + this.xOffset,
-          y: this.y - this.apothem,
-          gridCol: this.precedingPointsX + 1,
-          gridRow: this.precedingPointsY
-        },
+        // top left
+        ...(this.row == 0
+          ? [
+              {
+                // top left
+                x: this.x - this.xOffset,
+                y: this.y - this.apothem,
+                gridCol: this.precedingPointsX,
+                gridRow: this.precedingPointsY
+              }
+            ]
+          : []),
+        ...(this.row == 0
+          ? [
+              {
+                // top right
+                x: this.x + this.xOffset,
+                y: this.y - this.apothem,
+                gridCol: this.precedingPointsX + 1,
+                gridRow: this.precedingPointsY
+              }
+            ]
+          : []),
         {
           // center left
           x: this.x - this.apothem - 9,
@@ -209,12 +172,6 @@ export default defineComponent({
         }
       ]
     },
-    selectedActionablePoint () {
-      return this.actionablePoints.findIndex(
-        p =>
-          p.gridCol == this.selectedPoint.x && p.gridRow == this.selectedPoint.y
-      )
-    },
     radius () {
       return this.config.radius
     },
@@ -229,8 +186,7 @@ export default defineComponent({
     },
     precedingPointsY () {
       return 2 * this.row
-    },
-    ...mapState(['selectedPoint'])
+    }
   }
 })
 </script>

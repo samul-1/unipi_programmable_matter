@@ -1,4 +1,5 @@
 <template>
+  <button @click="$store.state.move = !$store.state.move">Start/stop</button>
   <v-stage ref="stage" :config="configKonva">
     <v-layer>
       <Grid ref="grid" :gridWidth="gridWidth"></Grid>
@@ -40,7 +41,7 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 15,
+      numParticles: 1,
       gridWidth: 4
     }
   },

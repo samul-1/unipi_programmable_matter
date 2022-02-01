@@ -10,8 +10,9 @@
 </template>
 
 <script lang="ts">
-import { IParticle } from '@/interfaces'
+import { GridPoint, IParticle } from '@/interfaces'
 import { defineComponent, PropType } from '@vue/runtime-core'
+import { mapState } from 'vuex'
 
 export default defineComponent({
   name: 'Particle',
@@ -21,17 +22,36 @@ export default defineComponent({
       required: true
     }
   },
+  created () {
+    setInterval(() => this.moveToRandomNeighbor(), 1000)
+  },
   data () {
     return {}
   },
+  methods: {
+    moveToRandomNeighbor () {
+      if (!this.move) {
+        return
+      }
+      const chosen = this.neighborPoints[
+        Math.floor(Math.random() * this.neighborPoints.length)
+      ]
+      this.$store.commit('updateParticlePosition', {
+        id: this.particle.id,
+        newPoint: chosen
+      })
+    }
+  },
   computed: {
-    position (): { x: number; y: number } {
-      const point = this.$store.getters.getPoint(
+    point () {
+      return this.$store.getters.getPoint(
         this.particle.currentRow,
         this.particle.currentCol
       )
-      if (point) {
-        return { x: point.x, y: point.y }
+    },
+    position (): { x: number; y: number } {
+      if (this.point) {
+        return { x: this.point.x, y: this.point.y }
       }
 
       return { x: 0, y: 0 }
@@ -41,7 +61,11 @@ export default defineComponent({
     },
     y () {
       return this.position.y
-    }
+    },
+    neighborPoints (): GridPoint[] {
+      return this.$store.getters.getNeighbors(this.point)
+    },
+    ...mapState(['move'])
   }
 })
 </script>
