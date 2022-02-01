@@ -1,8 +1,6 @@
 export const configHexagon = {
-  //   x: 100,
-  //   y: 150,
   sides: 6,
-  radius: 22,
+  radius: 70,
   rotation: 90,
   fill: 'transparent',
   stroke: 'black',

@@ -1,105 +1,81 @@
 <template>
-  <div>
-    <v-stage
-      ref="stage"
-      :config="configKonva"
-      @dragstart="handleDragstart"
-      @dragend="handleDragend"
-    >
-      <v-layer>
-        <!-- <v-regular-polygon
-          v-for="item in list"
-          :key="item.id"
-          :config="{
-            x: item.x,
-            y: item.y,
-            rotation: item.rotation,
-            id: item.id,
-            numPoints: 5,
-            innerRadius: 30,
-            outerRadius: 50,
-            fill: '#89b717',
-            opacity: 0.8,
-            draggable: true,
-            scaleX: dragItemId === item.id ? item.scale * 1.2 : item.scale,
-            scaleY: dragItemId === item.id ? item.scale * 1.2 : item.scale,
-            shadowColor: 'black',
-            shadowBlur: 10,
-            shadowOffsetX: dragItemId === item.id ? 15 : 5,
-            shadowOffsetY: dragItemId === item.id ? 15 : 5,
-            shadowOpacity: 0.6
-          }"
-        ></v-regular-polygon> -->
-        <!-- <v-circle :config="configCircle"></v-circle>
-        <v-regular-polygon :config="configHexagon"></v-regular-polygon> -->
-        <Grid></Grid>
-      </v-layer>
-    </v-stage>
-  </div>
+  <v-stage ref="stage" :config="configKonva">
+    <v-layer>
+      <Grid ref="grid" :gridWidth="gridWidth"></Grid>
+    </v-layer>
+    <v-layer>
+      <Particle
+        v-for="particle in particles"
+        :key="'particle-' + particle.id"
+        :particle="particle"
+      ></Particle>
+    </v-layer>
+  </v-stage>
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { v4 as uuidv4 } from 'uuid'
 
+import { IParticle } from '@/interfaces'
 import { defineComponent } from '@vue/runtime-core'
+import { mapState } from 'vuex'
 import Grid from './Grid.vue'
+import Particle from './Particle.vue'
 
 const width = window.innerWidth
 const height = window.innerHeight
 export default defineComponent({
   name: 'Main',
-  components: { Grid },
+  components: { Grid, Particle },
+  created () {
+    this.createParticles()
+  },
   data () {
     return {
-      list: [] as any,
-      dragItemId: null,
       configKonva: {
         width: width,
         height: height
       },
-      configCircle: {
-        x: 100,
-        y: 100,
-        radius: 70,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 4
-      },
-      configHexagon: {
-        x: 100,
-        y: 150,
-        sides: 6,
-        radius: 70,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 4
-      }
+      x: 0,
+      y: 0,
+      result: 0,
+      numParticles: 15,
+      gridWidth: 4
     }
   },
   methods: {
-    handleDragstart (e: any) {
-      // save drag element:
-      this.dragItemId = e.target.id()
-      // move current element to the top:
-      const item = this.list.find((i: any) => i.id === this.dragItemId)
-      const index = this.list.indexOf(item)
-      this.list.splice(index, 1)
-      this.list.push(item)
+    lightUpCell () {
+      this.$store.commit('selectPoint', {
+        x: this.x,
+        y: this.y
+      })
     },
-    handleDragend (e: any) {
-      this.dragItemId = null
+    createParticles () {
+      // eslint-disable-next-line @typescript-eslint/no-extra-semi
+      ;[...Array(this.numParticles)].forEach(_i => {
+        this.$store.commit('pushParticle', {
+          id: uuidv4(),
+          color: this.getRandomColor(),
+          state: 'contracted',
+          currentRow: this.getRandomRow(),
+          currentCol: this.getRandomCol()
+        } as IParticle)
+      })
+    },
+    getRandomRow () {
+      return Math.floor(Math.random() * 2 * this.gridWidth)
+    },
+    getRandomCol () {
+      return Math.floor(Math.random() * 2 * this.gridWidth)
+    },
+    getRandomColor () {
+      const colors = ['yellow', 'red', 'blue', 'green']
+      return colors[Math.floor(Math.random() * colors.length)]
     }
   },
-  mounted () {
-    for (let n = 0; n < 3; n++) {
-      this.list.push({
-        id: Math.round(Math.random() * 10000).toString(),
-        x: Math.random() * width,
-        y: Math.random() * height,
-        rotation: Math.random() * 180,
-        scale: Math.random()
-      })
-    }
+  computed: {
+    ...mapState(['cells', 'particles'])
   }
 })
 </script>

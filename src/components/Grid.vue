@@ -1,50 +1,56 @@
 <template>
   <div>
-    <!-- <v-regular-polygon
-      v-for="(cell, index) in cells"
-      :key="'cell-' + index"
-      :config="configHexagon"
-      :x="10"
-      :y="10"
-    ></v-regular-polygon> -->
     <grid-cell
       v-for="(cell, index) in cells"
       :key="'cell-' + index"
       :x="cell.x"
+      :row="getRow(index)"
+      :col="getCol(index)"
       :y="cell.y"
+      :ref="'cell-' + index"
+      :index="index"
+      :gridWidth="gridWidth"
     ></grid-cell>
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { defineComponent } from '@vue/runtime-core'
 import { configHexagon } from '@/shapes'
 import GridCell from './GridCell.vue'
+import { mapState } from 'vuex'
 export default defineComponent({
   components: { GridCell },
   name: 'Grid',
   props: {
     cellNumber: {
       type: Number,
-      default: 200
+      default: 16
     },
     gridWidth: {
       type: Number,
-      default: 25
+      default: 4
     }
   },
   created () {
     let currX = this.paddingX
     let currY = this.paddingY
-    ;[...Array(this.cellNumber)].forEach(i => {
+    this.gapX = this.configHexagon.radius
+    this.gapY = this.configHexagon.radius / 1.38
+    ;[...Array(this.cellNumber)].forEach((_i: number) => {
       if (
         currX >
-        this.gridWidth * (this.configHexagon.radius + this.gapX) + this.paddingX
+        this.gridWidth * (this.configHexagon.radius + this.gapX) +
+          this.paddingX -
+          this.configHexagon.radius
       ) {
         currY += this.configHexagon.radius + this.gapY
         currX = this.paddingX
       }
-      this.cells.push({
+      console.log('pushing')
+      this.pushCell({
         x: currX,
         y: currY
       })
@@ -53,13 +59,27 @@ export default defineComponent({
   },
   data () {
     return {
-      paddingY: 50,
-      paddingX: 50,
-      gapX: 22,
-      gapY: 15.5,
+      paddingY: 100,
+      paddingX: 150,
+      gapX: 0,
+      gapY: 0,
       configHexagon,
-      cells: [] as { x: number; y: number }[]
+      cells: [] as any
     }
+  },
+  methods: {
+    pushCell (cell: any) {
+      this.cells.push(cell)
+    },
+    getRow (index: number) {
+      return Math.floor(index / this.gridWidth)
+    },
+    getCol (index: number) {
+      return Math.floor(index % this.gridWidth)
+    }
+  },
+  computed: {
+    // ...mapState(['cells'])
   }
 })
 </script>
