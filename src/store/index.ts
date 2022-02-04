@@ -121,7 +121,8 @@ export default createStore({
     bottomLeftNeighbor: (state) => (point: GridPoint) =>
       state.gridPoints.find(
         (p) =>
-          p.gridCol == point.gridCol - 1 && p.gridRow == point.gridRow // TODO WATCH THIS!!!!
+          p.gridCol == point.gridCol - (point.gridRow % 2) &&
+          p.gridRow == point.gridRow + 1
       ),
     bottomRightNeighbor: (state) => (point: GridPoint) =>
       state.gridPoints.find(

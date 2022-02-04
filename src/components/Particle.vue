@@ -41,7 +41,11 @@ export default defineComponent({
         return
       }
       console.log(
-        'NEIGHBORS',
+        'I AM AT (',
+        this.particle.currentRow,
+        ', ',
+        this.particle.currentCol,
+        ') NEIGHBORS',
         this.neighborPoints.map(
           (p: GridPoint) => `(${p.gridRow}, ${p.gridCol})`
         )
