@@ -45,7 +45,7 @@ export default createStore({
             p.gridRow == particle.currentRow
         );
 
-        console.log('TARGET', target, 'particlepoint', particlePoint);
+        //console.log('TARGET', target, 'particlepoint', particlePoint);
 
         if (
           pointsEqual(target, getters.topLeftNeighbor(particlePoint))
@@ -130,6 +130,38 @@ export default createStore({
           p.gridCol == point.gridCol + (1 - (point.gridRow % 2)) &&
           p.gridRow == point.gridRow + 1
       ),
+    getFreeNeighborsInterval:
+      (state, getters) => (point: GridPoint) => {
+        const toInspect = (
+          getters.getNeighbors(point) as GridPoint[]
+        ).concat(getters.getNeighbors(point) as GridPoint[]);
+        let maximalFreeInterval = [] as GridPoint[];
+        let lastFreeIndex = -1;
+
+        toInspect.forEach((p, i) => {
+          if (getters.isGridPointFree(p)) {
+            lastFreeIndex = Math.max(
+              i % (toInspect.length - 1), // ?
+              lastFreeIndex
+            );
+            maximalFreeInterval.push(p);
+            if (i > toInspect.length / 2 && i === lastFreeIndex) {
+              return;
+            }
+          } else {
+            if (i <= toInspect.length / 2) {
+              maximalFreeInterval = [];
+            } else {
+              return;
+            }
+          }
+          // if (i === firstFreeIndex) {
+          //   return;
+          // }
+        });
+
+        return maximalFreeInterval;
+      },
     getNeighbors: (state, getters) => (point: GridPoint) =>
       [
         ...(getters.topLeftNeighbor(point)

@@ -40,29 +40,43 @@ export default defineComponent({
       if (!this.move) {
         return
       }
-      console.log(
-        'I AM AT (',
-        this.particle.currentRow,
-        ', ',
-        this.particle.currentCol,
-        ') NEIGHBORS',
-        this.neighborPoints.map(
-          (p: GridPoint) => `(${p.gridRow}, ${p.gridCol})`
-        )
-      )
+      // console.log(
+      //   'I AM AT (',
+      //   this.particle.currentRow,
+      //   ', ',
+      //   this.particle.currentCol,
+      //   ') NEIGHBORS',
+      //   this.neighborPoints.map(
+      //     (p: GridPoint) => `(${p.gridRow}, ${p.gridCol})`
+      //   )
+      // )
       if (this.target && this.$store.getters.isGridPointFree(this.target)) {
         this.$store.commit('moveParticleToTarget', {
           id: this.particle.id
         })
       } else {
-        const targetIndex =
-          null ?? Math.floor(Math.random() * this.neighborPoints.length)
-        const target = this.neighborPoints[targetIndex]
-        this.$store.commit('updateParticleTarget', {
-          id: this.particle.id,
-          target
-        })
+        const target = this.getNextTarget()
+        if (target) {
+          this.$store.commit('updateParticleTarget', {
+            id: this.particle.id,
+            target
+          })
+        }
       }
+    },
+    getNextTarget (): GridPoint | null {
+      const freeNeighborInterval = this.$store.getters.getFreeNeighborsInterval(
+        this.point
+      ) as GridPoint[]
+
+      console.log('FREE NEIGHBORS', freeNeighborInterval, 'I AM', this.point)
+
+      if (freeNeighborInterval.length > 2 && freeNeighborInterval.length < 6) {
+        const targetIndex = Math.floor(freeNeighborInterval.length / 2)
+        return freeNeighborInterval[targetIndex]
+      }
+
+      return null
     }
   },
 

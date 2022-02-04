@@ -4,7 +4,7 @@
   <v-line :config="diag1LineConfig"></v-line>
   <v-line :config="diag2LineConfig"></v-line>
   <v-line :config="overflowXLineConfig"></v-line>
-  <v-text
+  <!-- <v-text
     v-for="point in actionablePoints"
     :key="index + '-p-' + point.gridCol + '-' + point.gridRow"
     :config="{
@@ -13,7 +13,7 @@
       x: point.x,
       y: point.y
     }"
-  />
+  /> -->
 </template>
 
 <script lang="ts">
