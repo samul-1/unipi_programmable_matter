@@ -41,7 +41,7 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 10,
+      numParticles: 1,
       gridWidth: 4
     }
   },

@@ -5,6 +5,7 @@ import {
   IParticle,
   ParticleState,
 } from '@/interfaces';
+import { pointsEqual } from '@/utils';
 import { createStore } from 'vuex';
 
 export default createStore({
@@ -32,55 +33,59 @@ export default createStore({
           ? 'extended'
           : 'contracted',
     getParticleExtensionAngle:
-      (state) =>
+      (state, getters) =>
       (particleId: string): ExtensionAngle => {
         const particle = state.particles.find(
           (p) => p.id == particleId
         ) as IParticle;
         const target = particle?.targetPoint as GridPoint;
+        const particlePoint = state.gridPoints.find(
+          (p) =>
+            p.gridCol == particle.currentCol &&
+            p.gridRow == particle.currentRow
+        );
+
+        console.log('TARGET', target, 'particlepoint', particlePoint);
 
         if (
-          // top left -60
-          target.gridCol ==
-            particle.currentCol - (particle.currentRow % 2) &&
-          target.gridRow == particle.currentRow - 1
+          pointsEqual(target, getters.topLeftNeighbor(particlePoint))
         ) {
           return 60;
         }
-        //top right 60
         if (
-          target.gridCol ==
-            particle.currentCol + (1 - (particle.currentRow % 2)) &&
-          target.gridRow == particle.currentRow - 1
+          pointsEqual(target, getters.topRightNeighbor(particlePoint))
         ) {
           return -60;
         }
-        // center left -180
         if (
-          target.gridCol == particle.currentCol - 1 &&
-          target.gridRow == particle.currentRow
+          pointsEqual(
+            target,
+            getters.centerLeftNeighbor(particlePoint)
+          )
         ) {
           return -180;
         }
-        // center right 180
         if (
-          target.gridRow == particle.currentRow &&
-          target.gridCol == particle.currentCol + 1
+          pointsEqual(
+            target,
+            getters.centerRightNeighbor(particlePoint)
+          )
         ) {
           return 180;
         }
-        // bottom left -240
         if (
-          target.gridCol == particle.currentCol - 1 &&
-          target.gridRow == particle.currentRow
+          pointsEqual(
+            target,
+            getters.bottomLeftNeighbor(particlePoint)
+          )
         ) {
           return -240;
         }
-        // bottom right 240
         if (
-          target.gridRow == particle.currentRow + 1 &&
-          target.gridCol ==
-            particle.currentCol + (1 - (particle.currentRow % 2))
+          pointsEqual(
+            target,
+            getters.bottomRightNeighbor(particlePoint)
+          )
         ) {
           return 240;
         }
@@ -91,28 +96,60 @@ export default createStore({
       state.gridPoints.find(
         (p) => p.gridCol == col && p.gridRow == row
       ),
-    getNeighbors: (state) => (point: GridPoint) =>
-      state.gridPoints.filter(
+    topLeftNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
         (p) =>
-          // top left -60
-          (p.gridCol == point.gridCol - (point.gridRow % 2) &&
-            p.gridRow == point.gridRow - 1) ||
-          //top right 60
-          (p.gridCol == point.gridCol + (1 - (point.gridRow % 2)) &&
-            p.gridRow == point.gridRow - 1) ||
-          // center left -180
-          (p.gridCol == point.gridCol - 1 &&
-            p.gridRow == point.gridRow) ||
-          // center right 180
-          (p.gridRow == point.gridRow &&
-            p.gridCol == point.gridCol + 1) ||
-          // bottom left -240
-          (p.gridCol == point.gridCol - 1 &&
-            p.gridRow == point.gridRow) ||
-          // bottom right 240
-          (p.gridRow == point.gridRow + 1 &&
-            p.gridCol == point.gridCol + (1 - (point.gridRow % 2)))
+          p.gridCol == point.gridCol - (point.gridRow % 2) &&
+          p.gridRow == point.gridRow - 1
       ),
+    topRightNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
+        (p) =>
+          p.gridCol == point.gridCol + (1 - (point.gridRow % 2)) &&
+          p.gridRow == point.gridRow - 1
+      ),
+    centerLeftNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
+        (p) =>
+          p.gridCol == point.gridCol - 1 && p.gridRow == point.gridRow
+      ),
+    centerRightNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
+        (p) =>
+          p.gridCol == point.gridCol + 1 && p.gridRow == point.gridRow
+      ),
+    bottomLeftNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
+        (p) =>
+          p.gridCol == point.gridCol - 1 && p.gridRow == point.gridRow // TODO WATCH THIS!!!!
+      ),
+    bottomRightNeighbor: (state) => (point: GridPoint) =>
+      state.gridPoints.find(
+        (p) =>
+          p.gridCol == point.gridCol + (1 - (point.gridRow % 2)) &&
+          p.gridRow == point.gridRow + 1
+      ),
+    getNeighbors: (state, getters) => (point: GridPoint) =>
+      [
+        ...(getters.topLeftNeighbor(point)
+          ? [getters.topLeftNeighbor(point)]
+          : []),
+        ...(getters.topRightNeighbor(point)
+          ? [getters.topRightNeighbor(point)]
+          : []),
+        ...(getters.centerLeftNeighbor(point)
+          ? [getters.centerLeftNeighbor(point)]
+          : []),
+        ...(getters.centerRightNeighbor(point)
+          ? [getters.centerRightNeighbor(point)]
+          : []),
+        ...(getters.bottomLeftNeighbor(point)
+          ? [getters.bottomLeftNeighbor(point)]
+          : []),
+        ...(getters.bottomRightNeighbor(point)
+          ? [getters.bottomRightNeighbor(point)]
+          : []),
+      ],
   },
   mutations: {
     updateParticlePosition: (
