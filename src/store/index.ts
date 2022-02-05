@@ -132,32 +132,38 @@ export default createStore({
       ),
     getFreeNeighborsInterval:
       (state, getters) => (point: GridPoint) => {
-        const toInspect = (
-          getters.getNeighbors(point) as GridPoint[]
-        ).concat(getters.getNeighbors(point) as GridPoint[]);
+        const neighbors = getters.getNeighbors(point) as GridPoint[];
+        const toInspect = neighbors.concat(neighbors);
         let maximalFreeInterval = [] as GridPoint[];
         let lastFreeIndex = -1;
+        let hasEncounteredOccupiedCell = false;
+        let stop = false;
 
         toInspect.forEach((p, i) => {
+          if (stop) {
+            return;
+          }
           if (getters.isGridPointFree(p)) {
-            lastFreeIndex = Math.max(
-              i % (toInspect.length - 1), // ?
-              lastFreeIndex
-            );
             maximalFreeInterval.push(p);
-            if (i > toInspect.length / 2 && i === lastFreeIndex) {
-              return;
+
+            if (maximalFreeInterval.length === 6) {
+              stop = true;
+            }
+
+            if (i >= neighbors.length && i === lastFreeIndex) {
+              stop = true;
+            }
+            if (!hasEncounteredOccupiedCell && i < neighbors.length) {
+              lastFreeIndex = i;
             }
           } else {
-            if (i <= toInspect.length / 2) {
-              maximalFreeInterval = [];
+            if (maximalFreeInterval.length === 5) {
+              stop = true;
             } else {
-              return;
+              hasEncounteredOccupiedCell = true;
+              maximalFreeInterval = [];
             }
           }
-          // if (i === firstFreeIndex) {
-          //   return;
-          // }
         });
 
         return maximalFreeInterval;

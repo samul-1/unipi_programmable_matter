@@ -4,7 +4,7 @@
   <v-line :config="diag1LineConfig"></v-line>
   <v-line :config="diag2LineConfig"></v-line>
   <v-line :config="overflowXLineConfig"></v-line>
-  <!-- <v-text
+  <v-text
     v-for="point in actionablePoints"
     :key="index + '-p-' + point.gridCol + '-' + point.gridRow"
     :config="{
@@ -13,7 +13,7 @@
       x: point.x,
       y: point.y
     }"
-  /> -->
+  />
 </template>
 
 <script lang="ts">
@@ -164,13 +164,13 @@ export default defineComponent({
           gridCol: this.precedingPointsX,
           gridRow: this.precedingPointsY + 2
         },
-        ...(false
+        ...(this.row == this.gridWidth - 1
           ? [
               {
                 // bottom right
                 x: this.x + this.xOffset,
                 y: this.y + this.apothem,
-                gridCol: this.precedingPointsX + 2,
+                gridCol: this.precedingPointsX + 1,
                 gridRow: this.precedingPointsY + 2
               }
             ]

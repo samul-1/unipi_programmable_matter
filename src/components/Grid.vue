@@ -59,7 +59,7 @@ export default defineComponent({
   },
   data () {
     return {
-      paddingY: 100,
+      paddingY: 60,
       paddingX: 150,
       gapX: 0,
       gapY: 0,
