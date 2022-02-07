@@ -30,7 +30,7 @@ export default defineComponent({
     }
   },
   created () {
-    setInterval(() => this.moveToRandomNeighbor(), 250)
+    setInterval(() => this.moveToRandomNeighbor(), 10)
   },
   data () {
     return {}
@@ -69,7 +69,7 @@ export default defineComponent({
         this.point
       ) as GridPoint[]
 
-      console.log('FREE NEIGHBORS', freeNeighborInterval, 'I AM', this.point)
+      //console.log('FREE NEIGHBORS', freeNeighborInterval, 'I AM', this.point)
 
       if (freeNeighborInterval.length > 2 && freeNeighborInterval.length < 6) {
         const targetIndex = Math.floor(freeNeighborInterval.length / 2)

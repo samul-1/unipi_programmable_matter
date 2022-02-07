@@ -41,7 +41,7 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 15,
+      numParticles: 30,
       gridWidth: 5,
       cellNumber: 25
     }
@@ -54,16 +54,46 @@ export default defineComponent({
       })
     },
     createParticles () {
-      // eslint-disable-next-line @typescript-eslint/no-extra-semi
+      //eslint-disable-next-line @typescript-eslint/no-extra-semi
       ;[...Array(this.numParticles)].forEach(_i => {
         this.$store.commit('pushParticle', {
           id: uuidv4(),
           color: this.getRandomColor(),
-          state: 'contracted',
+          //state: 'contracted',
           currentRow: this.getRandomRow(),
           currentCol: this.getRandomCol()
         } as IParticle)
       })
+
+      //this.testParticles().forEach(p => this.$store.commit('pushParticle', p))
+    },
+    testParticles () {
+      return [
+        {
+          id: uuidv4(),
+          color: this.getRandomColor(),
+          currentRow: 2,
+          currentCol: 7
+        },
+        {
+          id: uuidv4(),
+          color: this.getRandomColor(),
+          currentRow: 3,
+          currentCol: 8
+        },
+        {
+          id: uuidv4(),
+          color: this.getRandomColor(),
+          currentRow: 4,
+          currentCol: 7
+        },
+        {
+          id: uuidv4(),
+          color: this.getRandomColor(),
+          currentRow: 3,
+          currentCol: 7
+        }
+      ] as IParticle[]
     },
     getRandomRow () {
       return Math.floor(Math.random() * 2 * this.gridWidth)

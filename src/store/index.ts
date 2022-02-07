@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable */
 import {
   ExtensionAngle,
   GridPoint,
@@ -45,8 +46,6 @@ export default createStore({
             p.gridRow == particle.currentRow
         );
 
-        //console.log('TARGET', target, 'particlepoint', particlePoint);
-
         if (
           pointsEqual(target, getters.topLeftNeighbor(particlePoint))
         ) {
@@ -89,8 +88,8 @@ export default createStore({
         ) {
           return 240;
         }
-
-        throw new Error('!!');
+        console.error('!!!!', 'from', particlePoint, 'to', target);
+        throw new Error();
       },
     getPoint: (state) => (row: number, col: number) =>
       state.gridPoints.find(
@@ -134,39 +133,66 @@ export default createStore({
       (state, getters) => (point: GridPoint) => {
         const neighbors = getters.getNeighbors(point) as GridPoint[];
         const toInspect = neighbors.concat(neighbors);
-        let maximalFreeInterval = [] as GridPoint[];
+        let currentInterval = [] as GridPoint[];
         let lastFreeIndex = -1;
         let hasEncounteredOccupiedCell = false;
         let stop = false;
 
+        const intervals = [] as GridPoint[][];
         toInspect.forEach((p, i) => {
           if (stop) {
             return;
           }
           if (getters.isGridPointFree(p)) {
-            maximalFreeInterval.push(p);
+            console.log(
+              'pushing',
+              p,
+              'to',
+              currentInterval,
+              'for',
+              point.gridRow,
+              point.gridCol
+            );
+            currentInterval.push(p);
 
-            if (maximalFreeInterval.length === 6) {
+            if (
+              currentInterval.length === 6 ||
+              i === toInspect.length - 1
+            ) {
+              intervals.push(currentInterval);
               stop = true;
             }
 
-            if (i >= neighbors.length && i === lastFreeIndex) {
-              stop = true;
-            }
-            if (!hasEncounteredOccupiedCell && i < neighbors.length) {
-              lastFreeIndex = i;
-            }
+            // if (i >= neighbors.length && i === lastFreeIndex) {
+            //   stop = true;
+            // }
+            // if (!hasEncounteredOccupiedCell && i < neighbors.length) {
+            //   lastFreeIndex = i;
+            // }
           } else {
-            if (maximalFreeInterval.length === 5) {
+            if (currentInterval.length === 5) {
               stop = true;
-            } else {
-              hasEncounteredOccupiedCell = true;
-              maximalFreeInterval = [];
             }
+            // hasEncounteredOccupiedCell = true;
+            intervals.push([...currentInterval]);
+            currentInterval = [];
           }
         });
 
-        return maximalFreeInterval;
+        console.log(
+          'ROW',
+          point.gridRow,
+          'COL',
+          point.gridCol,
+          'INTERVALS',
+          intervals
+        );
+        intervals.sort(
+          (a: GridPoint[], b: GridPoint[]) => b.length - a.length
+        );
+
+        return intervals[0];
+        //return currentInterval;
       },
     getNeighbors: (state, getters) => (point: GridPoint) =>
       [
@@ -176,17 +202,17 @@ export default createStore({
         ...(getters.topRightNeighbor(point)
           ? [getters.topRightNeighbor(point)]
           : []),
-        ...(getters.centerLeftNeighbor(point)
-          ? [getters.centerLeftNeighbor(point)]
-          : []),
         ...(getters.centerRightNeighbor(point)
           ? [getters.centerRightNeighbor(point)]
+          : []),
+        ...(getters.bottomRightNeighbor(point)
+          ? [getters.bottomRightNeighbor(point)]
           : []),
         ...(getters.bottomLeftNeighbor(point)
           ? [getters.bottomLeftNeighbor(point)]
           : []),
-        ...(getters.bottomRightNeighbor(point)
-          ? [getters.bottomRightNeighbor(point)]
+        ...(getters.centerLeftNeighbor(point)
+          ? [getters.centerLeftNeighbor(point)]
           : []),
       ],
   },
