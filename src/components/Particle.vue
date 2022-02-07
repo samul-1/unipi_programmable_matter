@@ -1,13 +1,5 @@
 <template>
-  <v-circle
-    v-if="state == 'contracted'"
-    :config="{
-      x,
-      y,
-      radius: 16,
-      fill: particle.color
-    }"
-  ></v-circle>
+  <v-circle v-if="state == 'contracted'" :config="config"></v-circle>
   <v-ellipse v-else :config="ellipseConfigs[angle]"></v-ellipse>
 </template>
 
@@ -18,6 +10,17 @@ import {
   IParticle,
   ParticleState
 } from '@/interfaces'
+import {
+  configCircle,
+  diagonalEllipseConfig,
+  horizontalEllipseConfig,
+  OFFSET_180_DEG_ELLIPSE_X,
+  OFFSET_180_DEG_ELLIPSE_Y,
+  OFFSET_240_DEG_ELLIPSE_X,
+  OFFSET_240_DEG_ELLIPSE_Y,
+  OFFSET_60_DEG_ELLIPSE_X,
+  OFFSET_60_DEG_ELLIPSE_Y
+} from '@/shapes'
 import { defineComponent, PropType } from '@vue/runtime-core'
 import { mapState } from 'vuex'
 
@@ -84,50 +87,44 @@ export default defineComponent({
     ellipseConfigs () {
       return {
         '60': {
-          x: this.x - 20,
-          y: this.y - 30,
-          radiusX: 35,
-          radiusY: 15,
+          x: this.x - OFFSET_60_DEG_ELLIPSE_X, //10,
+          y: this.y - OFFSET_60_DEG_ELLIPSE_Y, //15,
+          ...diagonalEllipseConfig,
           fill: this.particle.color,
           rotation: 60
         },
         '180': {
-          x: this.x + 35,
-          y: this.y,
-          radiusX: 40,
-          radiusY: 15,
+          x: this.x + OFFSET_180_DEG_ELLIPSE_X, // 17.5,
+          y: this.y + OFFSET_180_DEG_ELLIPSE_Y,
+          ...horizontalEllipseConfig,
           fill: this.particle.color,
           rotation: 180
         },
         '-180': {
-          x: this.x - 35,
-          y: this.y,
-          radiusX: 40,
-          radiusY: 15,
+          x: this.x - OFFSET_180_DEG_ELLIPSE_X,
+          y: this.y + OFFSET_180_DEG_ELLIPSE_Y,
+          ...horizontalEllipseConfig,
           fill: this.particle.color,
           rotation: -180
         },
         '-60': {
-          x: this.x + 20,
-          y: this.y - 30,
-          radiusX: 35,
-          radiusY: 15,
+          x: this.x + OFFSET_60_DEG_ELLIPSE_X, // + 10,
+          y: this.y - OFFSET_60_DEG_ELLIPSE_Y, // - 15,
+          ...diagonalEllipseConfig,
           fill: this.particle.color,
           rotation: -60
         },
         '240': {
-          x: this.x + 17,
-          y: this.y + 30,
-          radiusX: 35,
-          radiusY: 15,
+          x: this.x + OFFSET_240_DEG_ELLIPSE_X, //+ 8.5,
+          y: this.y + OFFSET_240_DEG_ELLIPSE_Y, // 15,
+          ...diagonalEllipseConfig,
           fill: this.particle.color,
           rotation: 240
         },
         '-240': {
-          x: this.x - 17,
-          y: this.y + 30,
-          radiusX: 35,
-          radiusY: 15,
+          x: this.x - OFFSET_240_DEG_ELLIPSE_X, // 8.5,
+          y: this.y + OFFSET_240_DEG_ELLIPSE_Y, // 15,
+          ...diagonalEllipseConfig,
           fill: this.particle.color,
           rotation: -240
         }
@@ -163,6 +160,14 @@ export default defineComponent({
     },
     target (): GridPoint | undefined {
       return this.$store.getters.getParticleTarget(this.particle.id)
+    },
+    config () {
+      return {
+        x: this.x,
+        y: this.y,
+        fill: this.particle.color,
+        ...configCircle
+      }
     },
     ...mapState(['move'])
   }

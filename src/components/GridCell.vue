@@ -4,7 +4,7 @@
   <v-line :config="diag1LineConfig"></v-line>
   <v-line :config="diag2LineConfig"></v-line>
   <v-line :config="overflowXLineConfig"></v-line>
-  <v-text
+  <!-- <v-text
     v-for="point in actionablePoints"
     :key="index + '-p-' + point.gridCol + '-' + point.gridRow"
     :config="{
@@ -13,7 +13,7 @@
       x: point.x,
       y: point.y
     }"
-  />
+  /> -->
 </template>
 
 <script lang="ts">
@@ -21,7 +21,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-constant-condition */
 
-import { configHexagon, getHexagonApothem, getHexagonXOffset } from '@/shapes'
+import {
+  configHexagon,
+  getHexagonApothem,
+  getHexagonXOffset,
+  HORIZONTAL_PARTICLE_OFFSET
+} from '@/shapes'
 import { defineComponent } from '@vue/runtime-core'
 import { mapState } from 'vuex'
 export default defineComponent({
@@ -138,7 +143,7 @@ export default defineComponent({
           : []),
         {
           // center left
-          x: this.x - this.apothem - 9,
+          x: this.x - this.apothem - HORIZONTAL_PARTICLE_OFFSET,
           y: this.y,
           gridCol: this.precedingPointsX,
           gridRow: this.precedingPointsY + 1
@@ -152,7 +157,7 @@ export default defineComponent({
         },
         {
           // center right
-          x: this.x + this.apothem + 9,
+          x: this.x + this.apothem + HORIZONTAL_PARTICLE_OFFSET,
           y: this.y,
           gridCol: this.precedingPointsX + 2,
           gridRow: this.precedingPointsY + 1

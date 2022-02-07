@@ -25,10 +25,6 @@ export default defineComponent({
   components: { GridCell },
   name: 'Grid',
   props: {
-    cellNumber: {
-      type: Number,
-      default: 16
-    },
     gridWidth: {
       type: Number,
       default: 4
@@ -79,7 +75,9 @@ export default defineComponent({
     }
   },
   computed: {
-    // ...mapState(['cells'])
+    cellNumber (): number {
+      return this.gridWidth * this.gridWidth
+    }
   }
 })
 </script>

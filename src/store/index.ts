@@ -144,15 +144,6 @@ export default createStore({
             return;
           }
           if (getters.isGridPointFree(p)) {
-            console.log(
-              'pushing',
-              p,
-              'to',
-              currentInterval,
-              'for',
-              point.gridRow,
-              point.gridCol
-            );
             currentInterval.push(p);
 
             if (
@@ -179,20 +170,11 @@ export default createStore({
           }
         });
 
-        console.log(
-          'ROW',
-          point.gridRow,
-          'COL',
-          point.gridCol,
-          'INTERVALS',
-          intervals
-        );
         intervals.sort(
           (a: GridPoint[], b: GridPoint[]) => b.length - a.length
         );
 
         return intervals[0];
-        //return currentInterval;
       },
     getNeighbors: (state, getters) => (point: GridPoint) =>
       [
