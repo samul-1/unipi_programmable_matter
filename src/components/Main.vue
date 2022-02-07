@@ -41,8 +41,8 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 30,
-      gridWidth: 10
+      numParticles: 100,
+      gridWidth: 15
     }
   },
   methods: {
@@ -95,10 +95,14 @@ export default defineComponent({
       ] as IParticle[]
     },
     getRandomRow () {
-      return Math.floor(Math.random() * 2 * this.gridWidth)
+      return Math.floor(
+        Math.random() * 2 * Math.floor(this.gridWidth * 0.66666) + 4
+      )
     },
     getRandomCol () {
-      return Math.floor(Math.random() * 2 * this.gridWidth)
+      return Math.floor(
+        Math.random() * 2 * Math.floor(this.gridWidth * 0.66666) + 6
+      )
     },
     getRandomColor () {
       const colors = ['yellow', 'red', 'blue', 'green']

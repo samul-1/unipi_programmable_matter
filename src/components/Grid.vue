@@ -55,8 +55,8 @@ export default defineComponent({
   },
   data () {
     return {
-      paddingY: 60,
-      paddingX: 150,
+      paddingY: 25,
+      paddingX: 120,
       gapX: 0,
       gapY: 0,
       configHexagon,

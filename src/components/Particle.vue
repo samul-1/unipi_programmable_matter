@@ -33,7 +33,7 @@ export default defineComponent({
     }
   },
   created () {
-    setInterval(() => this.moveToRandomNeighbor(), 10)
+    setInterval(() => this.moveToRandomNeighbor(), 20)
   },
   data () {
     return {}
@@ -43,16 +43,6 @@ export default defineComponent({
       if (!this.move) {
         return
       }
-      // console.log(
-      //   'I AM AT (',
-      //   this.particle.currentRow,
-      //   ', ',
-      //   this.particle.currentCol,
-      //   ') NEIGHBORS',
-      //   this.neighborPoints.map(
-      //     (p: GridPoint) => `(${p.gridRow}, ${p.gridCol})`
-      //   )
-      // )
       if (this.target && this.$store.getters.isGridPointFree(this.target)) {
         this.$store.commit('moveParticleToTarget', {
           id: this.particle.id
@@ -71,8 +61,6 @@ export default defineComponent({
       const freeNeighborInterval = this.$store.getters.getFreeNeighborsInterval(
         this.point
       ) as GridPoint[]
-
-      //console.log('FREE NEIGHBORS', freeNeighborInterval, 'I AM', this.point)
 
       if (freeNeighborInterval.length > 2 && freeNeighborInterval.length < 6) {
         const targetIndex = Math.floor(freeNeighborInterval.length / 2)

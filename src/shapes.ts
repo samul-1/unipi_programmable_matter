@@ -1,6 +1,6 @@
 export const configHexagon = {
   sides: 6,
-  radius: 35,
+  radius: 28,
   rotation: 90,
   fill: 'transparent',
   stroke: 'black',
@@ -8,7 +8,7 @@ export const configHexagon = {
 };
 
 export const configCircle = {
-  radius: 8,
+  radius: configHexagon.radius / 4.375,
 };
 
 export const OFFSET_60_DEG_ELLIPSE_X = configHexagon.radius / 3.5;
@@ -25,13 +25,13 @@ export const HORIZONTAL_PARTICLE_OFFSET =
   configCircle.radius / 1.777777777;
 
 export const diagonalEllipseConfig = {
-  radiusX: 17.5,
-  radiusY: 7.5,
+  radiusX: configCircle.radius / 0.457142875,
+  radiusY: configCircle.radius / 1.06666666,
 };
 
 export const horizontalEllipseConfig = {
-  radiusX: 20,
-  radiusY: 7.5,
+  radiusX: configCircle.radius / 0.4,
+  radiusY: configCircle.radius / 1.06666666,
 };
 
 const HEXAGON_CONSTANT = 0.866;
