@@ -78,42 +78,42 @@ export default defineComponent({
           x: this.x - OFFSET_60_DEG_ELLIPSE_X, //10,
           y: this.y - OFFSET_60_DEG_ELLIPSE_Y, //15,
           ...diagonalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: 60
         },
         '180': {
           x: this.x + OFFSET_180_DEG_ELLIPSE_X, // 17.5,
           y: this.y + OFFSET_180_DEG_ELLIPSE_Y,
           ...horizontalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: 180
         },
         '-180': {
           x: this.x - OFFSET_180_DEG_ELLIPSE_X,
           y: this.y + OFFSET_180_DEG_ELLIPSE_Y,
           ...horizontalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: -180
         },
         '-60': {
           x: this.x + OFFSET_60_DEG_ELLIPSE_X, // + 10,
           y: this.y - OFFSET_60_DEG_ELLIPSE_Y, // - 15,
           ...diagonalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: -60
         },
         '240': {
           x: this.x + OFFSET_240_DEG_ELLIPSE_X, //+ 8.5,
           y: this.y + OFFSET_240_DEG_ELLIPSE_Y, // 15,
           ...diagonalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: 240
         },
         '-240': {
           x: this.x - OFFSET_240_DEG_ELLIPSE_X, // 8.5,
           y: this.y + OFFSET_240_DEG_ELLIPSE_Y, // 15,
           ...diagonalEllipseConfig,
-          fill: this.particle.color,
+          fill: this.fillColor,
           rotation: -240
         }
       }
@@ -149,11 +149,17 @@ export default defineComponent({
     target (): GridPoint | undefined {
       return this.$store.getters.getParticleTarget(this.particle.id)
     },
+    isIsolated (): boolean {
+      return this.$store.getters.isPointIsolated(this.point)
+    },
+    fillColor (): string {
+      return this.isIsolated ? 'green' : 'red'
+    },
     config () {
       return {
         x: this.x,
         y: this.y,
-        fill: this.particle.color,
+        fill: this.fillColor,
         ...configCircle
       }
     },

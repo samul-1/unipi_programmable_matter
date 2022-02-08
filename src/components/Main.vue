@@ -1,8 +1,8 @@
 <template>
   <button @click="$store.state.move = !$store.state.move">Start/stop</button>
-  <v-stage ref="stage" :config="configKonva">
+  <v-stage v-if="graphicalMode || loading" ref="stage" :config="configKonva">
     <v-layer>
-      <Grid ref="grid" :gridWidth="gridWidth"></Grid>
+      <Grid @ready="onReady" ref="grid" :gridWidth="gridWidth"></Grid>
     </v-layer>
     <v-layer>
       <Particle
@@ -31,9 +31,8 @@ export default defineComponent({
   name: 'Main',
   components: { Grid, Particle },
   created () {
-    this.createParticles()
-
-    run()
+    //this.createParticles()
+    //run()
   },
   data () {
     return {
@@ -45,10 +44,21 @@ export default defineComponent({
       y: 0,
       result: 0,
       numParticles: 100,
-      gridWidth: 15
+      gridWidth: 15,
+      graphicalMode: true,
+      loading: true,
+      readyCount: 0
     }
   },
   methods: {
+    onReady () {
+      this.readyCount++
+      if (this.readyCount === this.gridWidth * this.gridWidth) {
+        this.loading = false
+        this.createParticles()
+        run()
+      }
+    },
     lightUpCell () {
       this.$store.commit('selectPoint', {
         x: this.x,

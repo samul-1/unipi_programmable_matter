@@ -1,6 +1,7 @@
 <template>
   <div>
     <grid-cell
+      @ready="$emit('ready')"
       v-for="(cell, index) in cells"
       :key="'cell-' + index"
       :x="cell.x"

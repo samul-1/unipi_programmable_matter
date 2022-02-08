@@ -53,5 +53,16 @@ export const run = (): void => {
     const activeParticles = getActiveParticles();
 
     activeParticles.forEach((p) => makeMove(p));
+
+    if (
+      store.state.particles.every(
+        (p) =>
+          store.getters.isPointIsolated(
+            store.getters.getPoint(p.currentRow, p.currentCol)
+          ) && store.getters.getParticleState(p) === 'contracted'
+      )
+    ) {
+      window.alert('Risolto!');
+    }
   }, DELAY);
 };

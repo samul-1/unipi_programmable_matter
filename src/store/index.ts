@@ -22,6 +22,10 @@ export default createStore({
           p.currentRow == point.gridRow &&
           p.currentCol == point.gridCol
       ),
+    isPointIsolated: (state, getters) => (point: GridPoint) =>
+      (getters.getNeighbors(point) as GridPoint[]).every((p) =>
+        getters.isGridPointFree(p)
+      ),
     getParticleTarget:
       (state) =>
       (particleId: string): GridPoint | undefined =>

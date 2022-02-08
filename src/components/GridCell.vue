@@ -59,6 +59,7 @@ export default defineComponent({
   },
   mounted () {
     this.$store.commit('pushGridPoints', this.actionablePoints)
+    this.$emit('ready')
   },
   methods: {},
   computed: {
