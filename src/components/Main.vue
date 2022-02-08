@@ -23,6 +23,7 @@ import { defineComponent } from '@vue/runtime-core'
 import { mapState } from 'vuex'
 import Grid from './Grid.vue'
 import Particle from './Particle.vue'
+import { run } from '@/scheduler'
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -31,6 +32,8 @@ export default defineComponent({
   components: { Grid, Particle },
   created () {
     this.createParticles()
+
+    run()
   },
   data () {
     return {

@@ -32,14 +32,14 @@ export default defineComponent({
       required: true
     }
   },
-  created () {
-    setInterval(() => this.moveToRandomNeighbor(), 20)
-  },
+  // created () {
+  //   setInterval(() => this.makeMove(), 20)
+  // },
   data () {
     return {}
   },
   methods: {
-    moveToRandomNeighbor () {
+    makeMove () {
       if (!this.move) {
         return
       }
