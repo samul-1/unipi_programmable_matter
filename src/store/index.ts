@@ -14,8 +14,11 @@ export default createStore({
     gridPoints: [] as GridPoint[],
     particles: [] as IParticle[],
     move: true,
+    schedulerHandle: null as number | null,
   },
   getters: {
+    nonObstacleParticles: (state) =>
+      state.particles.filter((p) => !p.isObstacle),
     isGridPointFree: (state) => (point: GridPoint) =>
       !state.particles.find(
         (p) =>

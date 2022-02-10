@@ -43,7 +43,7 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 100,
+      numParticles: 60,
       gridWidth: 15,
       graphicalMode: true,
       loading: true,
@@ -73,7 +73,8 @@ export default defineComponent({
           color: this.getRandomColor(),
           //state: 'contracted',
           currentRow: this.getRandomRow(),
-          currentCol: this.getRandomCol()
+          currentCol: this.getRandomCol(),
+          isObstacle: this.getRandomBool()
         } as IParticle)
       })
 
@@ -83,25 +84,25 @@ export default defineComponent({
       return [
         {
           id: uuidv4(),
-          color: this.getRandomColor(),
+          //color: this.getRandomColor(),
           currentRow: 2,
           currentCol: 7
         },
         {
           id: uuidv4(),
-          color: this.getRandomColor(),
+          //color: this.getRandomColor(),
           currentRow: 3,
           currentCol: 8
         },
         {
           id: uuidv4(),
-          color: this.getRandomColor(),
+          //color: this.getRandomColor(),
           currentRow: 4,
           currentCol: 7
         },
         {
           id: uuidv4(),
-          color: this.getRandomColor(),
+          //color: this.getRandomColor(),
           currentRow: 3,
           currentCol: 7
         }
@@ -120,6 +121,9 @@ export default defineComponent({
     getRandomColor () {
       const colors = ['yellow', 'red', 'blue', 'green']
       return colors[Math.floor(Math.random() * colors.length)]
+    },
+    getRandomBool () {
+      return Math.random() > 0.8
     }
   },
   computed: {

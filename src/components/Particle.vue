@@ -153,7 +153,11 @@ export default defineComponent({
       return this.$store.getters.isPointIsolated(this.point)
     },
     fillColor (): string {
-      return this.isIsolated ? 'green' : 'red'
+      return this.particle.isObstacle
+        ? 'black'
+        : this.isIsolated
+        ? 'green'
+        : 'red'
     },
     config () {
       return {

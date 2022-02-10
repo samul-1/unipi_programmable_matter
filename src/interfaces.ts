@@ -7,12 +7,10 @@ export interface GridPoint {
 
 export interface IParticle {
   id: string;
-  color: 'yellow' | 'red' | 'blue' | 'green';
-  //state: ;
   targetPoint?: GridPoint;
-  //extensionAngle?: ExtensionAngle;
   currentRow: number;
   currentCol: number;
+  isObstacle: boolean;
 }
 
 export type ExtensionAngle = 60 | 180 | -60 | -180 | 240 | -240;
