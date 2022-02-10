@@ -5,29 +5,47 @@ import { sampleSize } from 'lodash';
 const DELAY = 100;
 
 const getActiveParticles = (): IParticle[] =>
-  sampleSize(
-    store.getters.nonObstacleParticles,
-    Math.floor(Math.random() * (store.state.particles.length - 1) + 1)
-  );
+  store.getters.nonObstacleParticles;
+// sampleSize(
+//   store.getters.nonObstacleParticles,
+//   Math.floor(Math.random() * (store.state.particles.length - 1) + 1)
+// );
 
 const getNextTarget = (particle: IParticle): GridPoint | null => {
   const particlePoint = store.getters.getPoint(
     particle.currentRow,
     particle.currentCol
   );
-  const freeNeighborInterval = store.getters.getFreeNeighborsInterval(
-    particlePoint
-  ) as GridPoint[];
+  const { freeNeighborInterval, obstacle } =
+    store.getters.getFreeNeighborsInterval(particlePoint) as {
+      freeNeighborInterval: GridPoint[];
+      obstacle: boolean;
+    };
 
-  if (
-    freeNeighborInterval.length > 2 &&
-    freeNeighborInterval.length < 6
-  ) {
-    const targetIndex = Math.floor(freeNeighborInterval.length / 2);
-    return freeNeighborInterval[targetIndex];
+  return selectTargetFromInterval(freeNeighborInterval, obstacle);
+};
+
+const selectTargetFromInterval = (
+  interval: GridPoint[],
+  thereIsObstacle: boolean
+): GridPoint | null => {
+  let algorithm = store.state.algorithm;
+  let targetIndex;
+
+  if (algorithm === 'c') {
+    algorithm = thereIsObstacle ? 'b' : 'a';
   }
 
-  return null;
+  if (interval.length <= 2 || interval.length === 6) {
+    return null;
+  }
+  if (interval.length === 5 && algorithm === 'b') {
+    targetIndex = Math.random() > 0.5 ? 1 : 3;
+  } else {
+    targetIndex = Math.floor(interval.length / 2);
+  }
+
+  return interval[targetIndex];
 };
 
 const makeMove = (particle: IParticle): void => {
@@ -69,4 +87,8 @@ export const run = (): void => {
   }, DELAY);
 
   store.state.schedulerHandle = handle;
+};
+
+const getStatistics = (): { diameter: number; density: number } => {
+  return { diameter: 0, density: 0 };
 };

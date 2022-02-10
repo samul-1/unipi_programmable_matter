@@ -15,6 +15,7 @@ export default createStore({
     particles: [] as IParticle[],
     move: true,
     schedulerHandle: null as number | null,
+    algorithm: 'c' as 'a' | 'b' | 'c',
   },
   getters: {
     nonObstacleParticles: (state) =>
@@ -25,6 +26,12 @@ export default createStore({
           p.currentRow == point.gridRow &&
           p.currentCol == point.gridCol
       ),
+    isGridPointObstacle: (state) => (point: GridPoint) =>
+      state.particles.find(
+        (p) =>
+          p.currentRow == point.gridRow &&
+          p.currentCol == point.gridCol
+      )?.isObstacle,
     isPointIsolated: (state, getters) => (point: GridPoint) =>
       (getters.getNeighbors(point) as GridPoint[]).every((p) =>
         getters.isGridPointFree(p)
@@ -144,6 +151,7 @@ export default createStore({
         let lastFreeIndex = -1;
         let hasEncounteredOccupiedCell = false;
         let stop = false;
+        let thereIsNearbyObstacle = false;
 
         const intervals = [] as GridPoint[][];
         toInspect.forEach((p, i) => {
@@ -171,8 +179,12 @@ export default createStore({
             if (currentInterval.length === 5) {
               stop = true;
             }
+
+            if (getters.isGridPointObstacle(p)) {
+              thereIsNearbyObstacle = true;
+            }
             // hasEncounteredOccupiedCell = true;
-            intervals.push([...currentInterval]);
+            intervals.push(currentInterval);
             currentInterval = [];
           }
         });
@@ -181,7 +193,10 @@ export default createStore({
           (a: GridPoint[], b: GridPoint[]) => b.length - a.length
         );
 
-        return intervals[0];
+        return {
+          freeNeighborInterval: intervals[0],
+          obstacle: thereIsNearbyObstacle,
+        };
       },
     getNeighbors: (state, getters) => (point: GridPoint) =>
       [
