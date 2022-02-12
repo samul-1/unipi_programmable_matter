@@ -5,6 +5,7 @@ import {
   GridPoint,
   IParticle,
   ParticleState,
+  RunStats,
 } from '@/interfaces';
 import { pointsEqual } from '@/utils';
 import { createStore } from 'vuex';
@@ -14,12 +15,16 @@ export default createStore({
     gridPoints: [] as GridPoint[],
     particles: [] as IParticle[],
     move: true,
-    schedulerHandle: null as number | null,
     algorithm: 'c' as 'a' | 'b' | 'c',
+    logs: [] as RunStats[],
   },
   getters: {
+    populatedGrid: (state, getters) =>
+      state.gridPoints.filter((p) => !getters.isGridPointFree(p)),
     nonObstacleParticles: (state) =>
       state.particles.filter((p) => !p.isObstacle),
+    obstacleParticles: (state) =>
+      state.particles.filter((p) => p.isObstacle),
     isGridPointFree: (state) => (point: GridPoint) =>
       !state.particles.find(
         (p) =>
@@ -220,7 +225,29 @@ export default createStore({
           : []),
       ],
   },
+  actions: {
+    addLogRecord({ commit, state, getters }) {
+      commit('addLogRecord', {
+        algorithm: state.algorithm,
+        particleNumber: state.particles.length,
+        obstacleNumber: state.particles.filter((p) => p.isObstacle)
+          .length,
+        rounds: 0,
+        moves: 0,
+        initialDiameter: 0,
+        initialDensity: 0,
+        initialConfiguration: JSON.parse(
+          JSON.stringify(getters.populatedGrid)
+        ),
+      } as RunStats);
+    },
+    updateCurrentLogRecord({ state }, payload) {
+      const target = state.logs[state.logs.length - 1];
+      Object.assign(target, { ...target, ...payload });
+    },
+  },
   mutations: {
+    addLogRecord: (state, payload) => state.logs.push(payload),
     updateParticlePosition: (
       state,
       { id, newPoint }: { id: string; newPoint: GridPoint }

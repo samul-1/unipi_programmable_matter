@@ -1,6 +1,7 @@
 import { GridPoint, IParticle } from './interfaces';
 import store from './store';
 import { sampleSize } from 'lodash';
+import { getGridDensityAndDiameter } from './stats';
 
 const DELAY = 100;
 
@@ -66,9 +67,24 @@ const makeMove = (particle: IParticle): void => {
 };
 
 export const run = (): void => {
+  store.dispatch('addLogRecord');
+
+  const { diameter: initialDiameter, density: initialDensity } =
+    getGridDensityAndDiameter(store.getters.populatedGrid);
+  store.dispatch('updateCurrentLogRecord', {
+    initialDensity,
+    initialDiameter,
+  });
+  console.log('initial record', store.state.logs[0]);
+
+  let rounds = 0;
+  let moves = 0;
   // eslint-disable-next-line no-constant-condition
   const handle = setInterval(() => {
     const activeParticles = getActiveParticles();
+
+    moves += activeParticles.length;
+    rounds++;
 
     activeParticles.forEach((p) => makeMove(p));
 
@@ -80,15 +96,24 @@ export const run = (): void => {
           ) && store.getters.getParticleState(p) === 'contracted'
       )
     ) {
-      window.alert('Risolto!');
       clearInterval(handle);
-      store.state.schedulerHandle = null;
+
+      const { density: finalDensity, diameter: finalDiameter } =
+        getGridDensityAndDiameter(store.getters.populatedGrid);
+
+      store.dispatch('updateCurrentLogRecord', {
+        finalDensity,
+        finalDiameter,
+        moves,
+        rounds,
+        successful: true,
+      });
+      console.log('final record', store.state.logs[0]);
     }
   }, DELAY);
-
-  store.state.schedulerHandle = handle;
 };
 
 const getStatistics = (): { diameter: number; density: number } => {
+  // TODO implement
   return { diameter: 0, density: 0 };
 };

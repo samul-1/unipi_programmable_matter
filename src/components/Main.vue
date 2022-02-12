@@ -110,12 +110,12 @@ export default defineComponent({
     },
     getRandomRow () {
       return Math.floor(
-        Math.random() * 2 * Math.floor(this.gridWidth * 0.66666) + 4
+        Math.random() * 2 * Math.floor(this.gridWidth * 0.5) + 7
       )
     },
     getRandomCol () {
       return Math.floor(
-        Math.random() * 2 * Math.floor(this.gridWidth * 0.66666) + 6
+        Math.random() * 2 * Math.floor(this.gridWidth * 0.5) + 8
       )
     },
     getRandomColor () {
