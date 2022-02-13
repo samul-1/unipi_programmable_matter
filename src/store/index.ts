@@ -10,14 +10,22 @@ import {
 import { pointsEqual } from '@/utils';
 import { createStore } from 'vuex';
 
+const getDefaultState = () => ({
+  gridPoints: [] as GridPoint[],
+  particles: [] as IParticle[],
+  move: true,
+  algorithm: 'c' as 'a' | 'b' | 'c',
+  logs: [] as RunStats[],
+  runCount: 0,
+  maxRuns: 5,
+  gridWidth: 15,
+  numParticles: 20,
+});
+
+const initialState = getDefaultState();
+
 export default createStore({
-  state: {
-    gridPoints: [] as GridPoint[],
-    particles: [] as IParticle[],
-    move: true,
-    algorithm: 'c' as 'a' | 'b' | 'c',
-    logs: [] as RunStats[],
-  },
+  state: initialState,
   getters: {
     populatedGrid: (state, getters) =>
       state.gridPoints.filter((p) => !getters.isGridPointFree(p)),
@@ -226,6 +234,17 @@ export default createStore({
       ],
   },
   actions: {
+    startRun({ state }) {
+      state.particles.length = 0;
+      state.runCount++;
+      // reset state except for logs
+      // Object.assign(state, {
+      //   ...initialState,
+      //   gridPoints: state.gridPoints, // keep the grid as it's only rendered once
+      //   logs: state.logs, // keep logs from last run
+      //   runCount: state.runCount + 1, //update run count
+      // });
+    },
     addLogRecord({ commit, state, getters }) {
       commit('addLogRecord', {
         algorithm: state.algorithm,
@@ -292,8 +311,22 @@ export default createStore({
         particle.targetPoint = undefined;
       }
     },
-    pushGridPoints: (state, points) =>
-      state.gridPoints.push(...points),
-    pushParticle: (state, particle) => state.particles.push(particle),
+    pushGridPoints: (state, points) => {
+      console.log('pushing points');
+      (points as GridPoint[]).forEach((p) => {
+        if (
+          !state.gridPoints.find(
+            (p2) =>
+              p.gridCol === p2.gridCol && p.gridRow === p2.gridRow
+          )
+        ) {
+          state.gridPoints.push(p);
+        }
+      });
+    },
+    pushParticle: (state, particle) => {
+      console.log('push particle');
+      state.particles.push(particle);
+    },
   },
 });

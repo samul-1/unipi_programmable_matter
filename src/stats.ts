@@ -23,7 +23,6 @@ export const getGridDensityAndDiameter = (
 ): { density: number; diameter: number } => {
   let density = 0;
   let diameter = 0;
-
   const pairs = pairsOfArray(grid) as [GridPoint, GridPoint][];
 
   pairs.forEach((p) => {

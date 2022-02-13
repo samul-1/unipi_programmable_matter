@@ -1,5 +1,4 @@
 <template>
-  <button @click="$store.state.move = !$store.state.move">Start/stop</button>
   <v-stage v-if="graphicalMode || loading" ref="stage" :config="configKonva">
     <v-layer>
       <Grid @ready="onReady" ref="grid" :gridWidth="gridWidth"></Grid>
@@ -12,6 +11,12 @@
       ></Particle>
     </v-layer>
   </v-stage>
+  <textarea
+    style="position: absolute; left: 70%; top: 10%; right: 1%"
+    rows="40"
+    cols="30"
+    :value="jsonLogs"
+  ></textarea>
 </template>
 
 <script lang="ts">
@@ -43,91 +48,30 @@ export default defineComponent({
       x: 0,
       y: 0,
       result: 0,
-      numParticles: 60,
-      gridWidth: 15,
+      // numParticles: 60,
+      // gridWidth: 15,
       graphicalMode: true,
       loading: true,
       readyCount: 0
+      // maxRuns: 2
     }
   },
   methods: {
-    onReady () {
+    async onReady () {
+      console.log('ready')
       this.readyCount++
-      if (this.readyCount === this.gridWidth * this.gridWidth) {
-        this.loading = false
-        this.createParticles()
-        run()
-      }
-    },
-    lightUpCell () {
-      this.$store.commit('selectPoint', {
-        x: this.x,
-        y: this.y
-      })
-    },
-    createParticles () {
-      //eslint-disable-next-line @typescript-eslint/no-extra-semi
-      ;[...Array(this.numParticles)].forEach(_i => {
-        this.$store.commit('pushParticle', {
-          id: uuidv4(),
-          color: this.getRandomColor(),
-          //state: 'contracted',
-          currentRow: this.getRandomRow(),
-          currentCol: this.getRandomCol(),
-          isObstacle: this.getRandomBool()
-        } as IParticle)
-      })
 
-      //this.testParticles().forEach(p => this.$store.commit('pushParticle', p))
-    },
-    testParticles () {
-      return [
-        {
-          id: uuidv4(),
-          //color: this.getRandomColor(),
-          currentRow: 2,
-          currentCol: 7
-        },
-        {
-          id: uuidv4(),
-          //color: this.getRandomColor(),
-          currentRow: 3,
-          currentCol: 8
-        },
-        {
-          id: uuidv4(),
-          //color: this.getRandomColor(),
-          currentRow: 4,
-          currentCol: 7
-        },
-        {
-          id: uuidv4(),
-          //color: this.getRandomColor(),
-          currentRow: 3,
-          currentCol: 7
-        }
-      ] as IParticle[]
-    },
-    getRandomRow () {
-      return Math.floor(
-        Math.random() * 2 * Math.floor(this.gridWidth * 0.5) + 7
-      )
-    },
-    getRandomCol () {
-      return Math.floor(
-        Math.random() * 2 * Math.floor(this.gridWidth * 0.5) + 8
-      )
-    },
-    getRandomColor () {
-      const colors = ['yellow', 'red', 'blue', 'green']
-      return colors[Math.floor(Math.random() * colors.length)]
-    },
-    getRandomBool () {
-      return Math.random() > 0.8
+      if (this.readyCount === this.gridWidth * this.gridWidth) {
+        // grid finished rendering; we now have the coordinates of all cells
+        await run()
+      }
     }
   },
   computed: {
-    ...mapState(['cells', 'particles'])
+    ...mapState(['cells', 'particles', 'gridWidth', 'logs']),
+    jsonLogs () {
+      return JSON.stringify(this.$store.state.logs as unknown[])
+    }
   }
 })
 </script>
