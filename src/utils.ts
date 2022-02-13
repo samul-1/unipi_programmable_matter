@@ -20,3 +20,7 @@ export const getRandomCol = () => {
 export const getRandomBool = (probabilityTrue = 0.2) => {
   return Math.random() > 1 - probabilityTrue;
 };
+
+export const gridPointToGridCoordinates = (
+  p: GridPoint
+): [number, number] => [p.gridRow, p.gridCol];

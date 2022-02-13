@@ -2,7 +2,12 @@ import { GridPoint, IParticle } from './interfaces';
 import store from './store';
 import { sampleSize } from 'lodash';
 import { getGridDensityAndDiameter } from './stats';
-import { getRandomRow, getRandomCol, getRandomBool } from './utils';
+import {
+  getRandomRow,
+  getRandomCol,
+  getRandomBool,
+  gridPointToGridCoordinates,
+} from './utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const DELAY = 100;
@@ -135,7 +140,11 @@ export const run = async (): Promise<void> => {
       clearInterval(handle); // stop particles from moving
 
       const finalConfiguration = JSON.parse(
-        JSON.stringify(store.getters.populatedGrid)
+        JSON.stringify(
+          (store.getters.populatedGrid as GridPoint[]).map((p) =>
+            gridPointToGridCoordinates(p)
+          )
+        )
       );
       // get final stats and update log record
       const { density: finalDensity, diameter: finalDiameter } =

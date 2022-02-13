@@ -7,19 +7,19 @@ import {
   ParticleState,
   RunStats,
 } from '@/interfaces';
-import { pointsEqual } from '@/utils';
+import { gridPointToGridCoordinates, pointsEqual } from '@/utils';
 import { createStore } from 'vuex';
 
 const getDefaultState = () => ({
   gridPoints: [] as GridPoint[],
   particles: [] as IParticle[],
   move: true,
-  algorithm: 'c' as 'a' | 'b' | 'c',
+  algorithm: 'a' as 'a' | 'b' | 'c',
   logs: [] as RunStats[],
   runCount: 0,
-  maxRuns: 5,
+  maxRuns: 30,
   gridWidth: 15,
-  numParticles: 20,
+  numParticles: 100,
 });
 
 const initialState = getDefaultState();
@@ -256,7 +256,11 @@ export default createStore({
         initialDiameter: 0,
         initialDensity: 0,
         initialConfiguration: JSON.parse(
-          JSON.stringify(getters.populatedGrid)
+          JSON.stringify(
+            (getters.populatedGrid as GridPoint[]).map((p) =>
+              gridPointToGridCoordinates(p)
+            )
+          )
         ),
       } as RunStats);
     },
