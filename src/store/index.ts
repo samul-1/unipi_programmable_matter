@@ -19,7 +19,7 @@ const getDefaultState = () => ({
   runCount: 0,
   maxRuns: 10,
   gridWidth: 15,
-  numParticles: 20,
+  numParticles: 100,
 });
 
 const initialState = getDefaultState();
