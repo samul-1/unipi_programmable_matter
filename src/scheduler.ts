@@ -93,7 +93,7 @@ const makeMove = (particle: IParticle): void => {
   }
 };
 
-const MAX_ROUNDS = 1000;
+const MAX_ROUNDS = 500;
 
 export const run = async (): Promise<void> => {
   // reset state
@@ -148,7 +148,9 @@ export const run = async (): Promise<void> => {
       );
       // get final stats and update log record
       const { density: finalDensity, diameter: finalDiameter } =
-        getGridDensityAndDiameter(finalConfiguration);
+        getGridDensityAndDiameter(
+          store.getters.populatedGrid as GridPoint[]
+        );
       await store.dispatch('updateCurrentLogRecord', {
         finalDensity,
         finalDiameter,

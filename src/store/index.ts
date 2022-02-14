@@ -14,12 +14,12 @@ const getDefaultState = () => ({
   gridPoints: [] as GridPoint[],
   particles: [] as IParticle[],
   move: true,
-  algorithm: 'a' as 'a' | 'b' | 'c',
+  algorithm: 'b' as 'a' | 'b' | 'c',
   logs: [] as RunStats[],
   runCount: 0,
-  maxRuns: 30,
+  maxRuns: 10,
   gridWidth: 15,
-  numParticles: 100,
+  numParticles: 20,
 });
 
 const initialState = getDefaultState();
