@@ -11,6 +11,7 @@ export interface IParticle {
   currentRow: number;
   currentCol: number;
   isObstacle: boolean;
+  clockwise: boolean;
 }
 
 export interface RunStats {

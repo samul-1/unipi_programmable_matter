@@ -12,7 +12,7 @@
     </v-layer>
   </v-stage>
   <textarea
-    style="position: absolute; left: 70%; top: 10%; right: 1%"
+    style="visibility: hidden; position: absolute; left: 70%; top: 10%; right: 1%"
     rows="40"
     cols="30"
     :value="jsonLogs"

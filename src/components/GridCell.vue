@@ -9,7 +9,7 @@
     :key="index + '-p-' + point.gridCol + '-' + point.gridRow"
     :config="{
       text: '(' + point.gridRow + ', ' + point.gridCol + ')',
-      fontSize: 15,
+      fontSize: 7,
       x: point.x,
       y: point.y
     }"

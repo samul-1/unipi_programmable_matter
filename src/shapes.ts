@@ -11,6 +11,11 @@ export const configCircle = {
   radius: configHexagon.radius / 4.375,
 };
 
+export const configSquare = {
+  width: (2 * configHexagon.radius) / 4.375,
+  height: (2 * configHexagon.radius) / 4.375,
+};
+
 export const OFFSET_60_DEG_ELLIPSE_X = configHexagon.radius / 3.5;
 export const OFFSET_60_DEG_ELLIPSE_Y =
   configHexagon.radius / 2.3333333;

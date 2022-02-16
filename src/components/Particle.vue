@@ -1,5 +1,6 @@
 <template>
-  <v-circle v-if="state == 'contracted'" :config="config"></v-circle>
+  <v-rect v-if="particle.isObstacle" :config="config"></v-rect>
+  <v-circle v-else-if="state == 'contracted'" :config="config"></v-circle>
   <v-ellipse v-else :config="ellipseConfigs[angle]"></v-ellipse>
 </template>
 
@@ -12,6 +13,7 @@ import {
 } from '@/interfaces'
 import {
   configCircle,
+  configSquare,
   diagonalEllipseConfig,
   horizontalEllipseConfig,
   OFFSET_180_DEG_ELLIPSE_X,
@@ -157,14 +159,14 @@ export default defineComponent({
         ? 'black'
         : this.isIsolated
         ? 'green'
-        : 'red'
+        : 'black'
     },
     config () {
       return {
-        x: this.x,
-        y: this.y,
+        x: this.x - (this.particle.isObstacle ? configSquare.width / 2 : 0),
+        y: this.y - (this.particle.isObstacle ? configSquare.width / 2 : 0),
         fill: this.fillColor,
-        ...configCircle
+        ...(this.particle.isObstacle ? configSquare : configCircle)
       }
     },
     ...mapState(['move'])

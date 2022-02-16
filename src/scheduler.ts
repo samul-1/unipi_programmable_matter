@@ -20,8 +20,21 @@ const createParticles = () => {
       id: uuidv4(),
       currentRow: getRandomRow(),
       currentCol: getRandomCol(),
-      isObstacle: getRandomBool(0),
+      isObstacle: false,
+      clockwise: getRandomBool(0.5),
     } as IParticle);
+  });
+};
+
+const createObstacles = () => {
+  store.state.obstacleCoordinates.forEach((p) => {
+    store.commit('pushParticle', {
+      id: uuidv4(),
+      currentRow: p[0],
+      currentCol: p[1],
+      isObstacle: true,
+      clockwise: false, // doesn't matter
+    });
   });
 };
 
@@ -43,12 +56,17 @@ const getNextTarget = (particle: IParticle): GridPoint | null => {
       obstacle: boolean;
     };
 
-  return selectTargetFromInterval(freeNeighborInterval, obstacle);
+  return selectTargetFromInterval(
+    freeNeighborInterval,
+    obstacle,
+    particle.clockwise
+  );
 };
 
 const selectTargetFromInterval = (
   interval: GridPoint[],
-  thereIsObstacle: boolean
+  thereIsObstacle: boolean,
+  clockwise: boolean
 ): GridPoint | null => {
   let algorithm = store.state.algorithm;
   let targetIndex;
@@ -58,13 +76,17 @@ const selectTargetFromInterval = (
     algorithm = thereIsObstacle ? 'b' : 'a';
   }
 
-  if (interval.length <= 2 || interval.length === 6) {
+  if (interval.length < 2 || interval.length === 6) {
     // no algorithm makes a move on an interval 1, 2, or 6 cells long
     return null;
   }
   if (interval.length === 5 && algorithm === 'b') {
     // algorithm 'b' selects second or fourth cell in a 5-cell interval
     targetIndex = Math.random() > 0.5 ? 1 : 3;
+
+    if (interval.length % 2 === 0 && !clockwise) {
+      targetIndex--;
+    }
   } else {
     // algorithm 'a' or 'b' on a non-5-cell interval always selects the middle cell
     targetIndex = Math.floor(interval.length / 2);
@@ -99,6 +121,7 @@ export const run = async (): Promise<void> => {
   // reset state
   await store.dispatch('startRun');
   createParticles();
+  createObstacles();
 
   // add log with initial data for the run
   await store.dispatch('addLogRecord');
